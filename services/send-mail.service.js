@@ -5,7 +5,8 @@
 const postMailService = async (user, content) => {
   try {
     return { data: 'Success',
-              code: 200}
+              code: 200,
+            testVal: process.env.KEY}
   } catch(e) {
     throw new Error(e.message)
   }

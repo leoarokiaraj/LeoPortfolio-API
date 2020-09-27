@@ -1,7 +1,7 @@
 const express = require('express');
 var http = require('http');
 const app = express();
-const port = normalizePort(process.env.PORT || '3000');
+const port = normalizePort(process.env.PORT);
 const routes = require('./routes')
 
 
