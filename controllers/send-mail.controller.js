@@ -8,12 +8,29 @@ const { postMailService } = SendMailService
 const postMail = async (req, res, next) => {
   const contactData = req.body
   try {
-    var resp = await postMailService(contactData)
+    var resp = null;
+    await postMailService(contactData).then((mailRes)=>{
+      resp = mailRes;
+    }).catch((err)=>{
+      resp = err;
+    })
     // other service call (or same service, different function can go here)
     // i.e. - await generateBlogpostPreview()
-    res.status(200).send(resp)
+
+    console.log(resp);
+    switch (resp.StatusCode) {
+      case 200:
+        res.status(200).send(resp)
+        break;
+      case 503:
+        res.status(503).send(resp)
+        break;
+      default:
+        res.sendStatus(500)
+        break;
+    }
     next()
-  } catch(e) {
+  } catch (e) {
     console.log(e.message)
     res.sendStatus(500) && next(error)
   }

@@ -7,36 +7,41 @@ const { decrypt } = require('../utilities/decrypt.util')
 const postMailService = async (contactData) => {
   try {
 
-      var transport = nodemailer.createTransport({
-          service: "gmail",
-          auth: {
-            user: process.env.C+"@gmail.com",
-            pass: decrypt({iv:process.env.A, content:process.env.B})
-          }
-        });
+    var transport = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.C + "@gmail.com",
+        pass: decrypt({
+          iv: process.env.A,
+          content: process.env.B
+        })
+      }
+    });
 
-        const message = {
-          from: 'leoarokiaraj1@gmail.com', // Sender address
-          to: 'leoarokiaraj1@gmail.com', // List of recipients
-          subject: 'A ping from Leo Portfolio', // Subject line
-          text: 'Hello Leo, \n \t My name is '+ contactData.name + ' and my email address is '+contactData.email_id+
-                  ' and I would like to discuss about '+contactData.content+'. \n\n Thanks and regards, \n '+ contactData.name // Plain text body
-        };
+    const message = {
+      from: 'leoarokiaraj1@gmail.com', // Sender address
+      to: 'leoarokiaraj1@gmail.com', // List of recipients
+      subject: 'A ping from Leo Portfolio', // Subject line
+      text: 'Hello Leo, \n \t My name is ' + contactData.name + ' and my email address is ' + contactData.email_id +
+        ' and I would like to discuss about ' + contactData.content + '. \n\n Thanks and regards, \n ' + contactData.name // Plain text body
+    };
 
-        transport.sendMail(message, function(err, info) {
-          if (err) {
-            console.log(err)
-          } else {
-            console.log(info);
-          }
-        });
+  return new Promise((res, rej) => {
+      transport.sendMail(message, function(err, info) {
+        if (err) {
+          rej( {
+            StatusCode: 503,
+            Status: 'Failure'
+          })
+        } else {
+          res( {
+            StatusCode: 200,
+            Status: 'Success'
+          })
+        }
+      });
+    })
 
-    console.log()
-
-    return {
-      data: 'Success',
-      code: 200,
-    }
   } catch (e) {
     throw new Error(e.message)
   }
