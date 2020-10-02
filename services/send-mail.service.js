@@ -1,13 +1,43 @@
+const nodemailer = require('nodemailer');
+const { decrypt } = require('../utilities/decrypt.util')
 /*
-  * if you need to make calls to additional tables, data stores (Redis, for example),
-  * or call an external endpoint as part of creating the blogpost, add them to this service
-*/
-const postMailService = async (user, content) => {
+ * if you need to make calls to additional tables, data stores (Redis, for example),
+ * or call an external endpoint as part of creating the blogpost, add them to this service
+ */
+const postMailService = async (contactData) => {
   try {
-    return { data: 'Success',
-              code: 200,
-            testVal: process.env.KEY}
-  } catch(e) {
+
+      var transport = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: process.env.C+"@gmail.com",
+            pass: decrypt({iv:process.env.A, content:process.env.B})
+          }
+        });
+
+        const message = {
+          from: 'leoarokiaraj1@gmail.com', // Sender address
+          to: 'leoarokiaraj1@gmail.com', // List of recipients
+          subject: 'A ping from Leo Portfolio', // Subject line
+          text: 'Hello Leo, \n \t My name is '+ contactData.name + ' and my email address is '+contactData.email_id+
+                  ' and I would like to discuss about '+contactData.content+'. \n\n Thanks and regards, \n '+ contactData.name // Plain text body
+        };
+
+        transport.sendMail(message, function(err, info) {
+          if (err) {
+            console.log(err)
+          } else {
+            console.log(info);
+          }
+        });
+
+    console.log()
+
+    return {
+      data: 'Success',
+      code: 200,
+    }
+  } catch (e) {
     throw new Error(e.message)
   }
 }

@@ -1,15 +1,15 @@
 const express = require('express');
 var http = require('http');
+var cors = require('cors');
 const app = express();
 const port = normalizePort(process.env.PORT);
 const routes = require('./routes')
 
-
+app.use(cors({origin: process.env.DOMAIN}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.set('port', port);
-app.use('/api', routes)
-
+app.use('/api', routes);
 /**
  * Create HTTP server.
  */
